@@ -1,0 +1,19 @@
+# Eclipse
+.settings/
+.classpath
+.project
+
+# IntelliJ IDEA
+.idea/
+*.iml
+venv/
+
+# Maven
+target/
+
+# Python
+__pycache__
+
+# Remote_playAnything
+output/
+config_rpa.json

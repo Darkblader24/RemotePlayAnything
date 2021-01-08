@@ -1,0 +1,248 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<ui version="4.0">
+ <class>MainWindow</class>
+ <widget class="QMainWindow" name="MainWindow">
+  <property name="geometry">
+   <rect>
+    <x>0</x>
+    <y>0</y>
+    <width>810</width>
+    <height>600</height>
+   </rect>
+  </property>
+  <property name="windowTitle">
+   <string>Remote Play Anything</string>
+  </property>
+  <property name="autoFillBackground">
+   <bool>false</bool>
+  </property>
+  <widget class="QWidget" name="centralwidget">
+   <property name="styleSheet">
+    <string notr="true">#startGameButton {
+    background-color:rgb(255, 35, 35);
+    color:white;
+    border-style:outset;
+    border-width:2px;
+    border-radius:20px;
+    border-color:black;
+    font:bold 22px;
+}
+
+#startGameButton:hover {
+    background-color:rgb(255, 75, 75);
+}
+
+#startGameButton:pressed {
+    background-color:rgb(201, 14, 14);
+}
+
+#gamesList {
+    font: 15px;
+    background-color: rgba(255,255,255,150);
+}
+
+#selectedGameLabel {
+    font:bold 15px;
+}
+
+#gamesList {
+    font: 15px;
+    background-color: rgba(255,255,255,150);
+}
+
+[accessibleName=&quot;listEditButton&quot;] {
+    font: 13px;
+}
+
+#gameListTitleLabel {
+    font: bold 14px;
+}
+
+#backgroundImage {
+    background: url(:/Icons/background.png)
+}</string>
+   </property>
+   <widget class="QPushButton" name="startGameButton">
+    <property name="geometry">
+     <rect>
+      <x>310</x>
+      <y>490</y>
+      <width>191</width>
+      <height>61</height>
+     </rect>
+    </property>
+    <property name="text">
+     <string>Start Game</string>
+    </property>
+   </widget>
+   <widget class="QLabel" name="selectedGameLabel">
+    <property name="geometry">
+     <rect>
+      <x>20</x>
+      <y>420</y>
+      <width>771</width>
+      <height>61</height>
+     </rect>
+    </property>
+    <property name="text">
+     <string>Please select a game..</string>
+    </property>
+    <property name="scaledContents">
+     <bool>false</bool>
+    </property>
+    <property name="alignment">
+     <set>Qt::AlignCenter</set>
+    </property>
+    <property name="wordWrap">
+     <bool>true</bool>
+    </property>
+   </widget>
+   <widget class="QListWidget" name="gamesList">
+    <property name="geometry">
+     <rect>
+      <x>80</x>
+      <y>50</y>
+      <width>651</width>
+      <height>331</height>
+     </rect>
+    </property>
+    <item>
+     <property name="text">
+      <string>Heroes of Might and Magic 7</string>
+     </property>
+    </item>
+    <item>
+     <property name="text">
+      <string>Battlefield 4</string>
+     </property>
+    </item>
+    <item>
+     <property name="text">
+      <string>Magicka The Unknown Place of Farts</string>
+     </property>
+    </item>
+   </widget>
+   <widget class="QPushButton" name="addGameButton">
+    <property name="geometry">
+     <rect>
+      <x>80</x>
+      <y>390</y>
+      <width>91</width>
+      <height>31</height>
+     </rect>
+    </property>
+    <property name="accessibleName">
+     <string>listEditButton</string>
+    </property>
+    <property name="text">
+     <string>Add Game</string>
+    </property>
+   </widget>
+   <widget class="QPushButton" name="removeGameButton">
+    <property name="geometry">
+     <rect>
+      <x>620</x>
+      <y>390</y>
+      <width>111</width>
+      <height>31</height>
+     </rect>
+    </property>
+    <property name="accessibleName">
+     <string>listEditButton</string>
+    </property>
+    <property name="text">
+     <string>Remove Game</string>
+    </property>
+   </widget>
+   <widget class="QPushButton" name="editGameButton">
+    <property name="geometry">
+     <rect>
+      <x>180</x>
+      <y>390</y>
+      <width>91</width>
+      <height>31</height>
+     </rect>
+    </property>
+    <property name="accessibleName">
+     <string>listEditButton</string>
+    </property>
+    <property name="text">
+     <string>Edit Game</string>
+    </property>
+   </widget>
+   <widget class="QLabel" name="gameListTitleLabel">
+    <property name="geometry">
+     <rect>
+      <x>80</x>
+      <y>20</y>
+      <width>221</width>
+      <height>21</height>
+     </rect>
+    </property>
+    <property name="text">
+     <string>Your Games:</string>
+    </property>
+   </widget>
+   <widget class="QGraphicsView" name="backgroundImage">
+    <property name="geometry">
+     <rect>
+      <x>0</x>
+      <y>0</y>
+      <width>810</width>
+      <height>600</height>
+     </rect>
+    </property>
+    <property name="backgroundBrush">
+     <brush brushstyle="Dense1Pattern">
+      <color alpha="255">
+       <red>0</red>
+       <green>0</green>
+       <blue>0</blue>
+      </color>
+     </brush>
+    </property>
+    <property name="foregroundBrush">
+     <brush brushstyle="Dense5Pattern">
+      <color alpha="255">
+       <red>0</red>
+       <green>0</green>
+       <blue>0</blue>
+      </color>
+     </brush>
+    </property>
+    <property name="interactive">
+     <bool>false</bool>
+    </property>
+   </widget>
+   <widget class="QLabel" name="versionLabel">
+    <property name="geometry">
+     <rect>
+      <x>630</x>
+      <y>560</y>
+      <width>171</width>
+      <height>31</height>
+     </rect>
+    </property>
+    <property name="text">
+     <string>Remote Play Anything v1.0</string>
+    </property>
+    <property name="alignment">
+     <set>Qt::AlignBottom|Qt::AlignRight|Qt::AlignTrailing</set>
+    </property>
+   </widget>
+   <zorder>backgroundImage</zorder>
+   <zorder>startGameButton</zorder>
+   <zorder>selectedGameLabel</zorder>
+   <zorder>gamesList</zorder>
+   <zorder>addGameButton</zorder>
+   <zorder>removeGameButton</zorder>
+   <zorder>gameListTitleLabel</zorder>
+   <zorder>editGameButton</zorder>
+   <zorder>versionLabel</zorder>
+  </widget>
+ </widget>
+ <resources>
+  <include location="resources.qrc"/>
+ </resources>
+ <connections/>
+</ui>
