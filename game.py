@@ -1,9 +1,9 @@
+import ctypes
 import os
 import sys
 import json
 import ntpath
 import pathlib
-import time
 from typing import Optional
 
 import easygui
@@ -53,11 +53,23 @@ class GameList:
         self.ui.gamesList.clear()
         self.load_games_from_config()
 
+    def try_except(func):
+        def wrapper(*args, **kwargs):
+            try:
+                return func(*args[:-1] if len(args) > 1 else args, **kwargs)
+            except Exception as e:
+                print(e)
+                self: GameList = args[0]
+                self.show_error("An error has occured!", str(e))
+        return wrapper
+
+    @try_except
     def save_games_to_config(self):
         with open(config_file, 'w', encoding="utf8") as outfile:
             game_list_data = [game.serialize() for game in self.game_list]
             json.dump(game_list_data, outfile, ensure_ascii=False, indent=4)
 
+    @try_except
     def load_games_from_config(self):
         if os.path.isfile(config_file):
             try:
@@ -70,18 +82,21 @@ class GameList:
                 os.remove(config_file)
                 print("Config file got reset.")
 
+    @try_except
     def get_selected_row(self) -> Optional[int]:
         selected_rows = self.ui.gamesList.selectedIndexes()
         if not selected_rows:
             return None
         return selected_rows[0].row()
 
+    @try_except
     def get_selected_game(self) -> Optional[Game]:
         row = self.get_selected_row()
         if row is None:
             return None
         return self.game_list[row]
 
+    @try_except
     def start_game(self):
         game = self.get_selected_game()
         if not game:
@@ -97,9 +112,17 @@ class GameList:
         cmd = game.path
         if game.parameters:
             cmd += " " + game.parameters
-        print(cmd)
-        subprocess.Popen(cmd)
 
+        try:
+            subprocess.Popen(cmd)
+        except WindowsError as e:
+            error = str(e)
+            if " 740]" in error:
+                ctypes.windll.shell32.ShellExecuteW(None, "runas", game.path, game.parameters, None, 1)
+            else:
+                self.show_error(text=error.replace("%1", game.name))
+
+    @try_except
     def add_game(self, name=None, path=None, parameters=None, show_details=True):
         if show_details:
             result, name, path, parameters = self.open_details_dialog()
@@ -110,13 +133,13 @@ class GameList:
         self.game_list.append(game)
 
         item = QtWidgets.QListWidgetItem()
-        # item.setText(f"{game.name} ({game.path})")
         item.setText(game.title())
         self.ui.gamesList.addItem(item)
 
         if show_details:
             self.save_games_to_config()
 
+    @try_except
     def remove_game(self):
         selected_rows = self.ui.gamesList.selectedIndexes()
         if not selected_rows:
@@ -129,6 +152,7 @@ class GameList:
 
         self.save_games_to_config()
 
+    @try_except
     def edit_game(self):
         game = self.get_selected_game()
         row = self.get_selected_row()
@@ -145,13 +169,13 @@ class GameList:
         game.parameters = parameters
 
         # Update the item in the list and the selected game
-        # self.ui.gamesList.item(row).setText(f"{game.name} ({game.path})")
         self.ui.gamesList.item(row).setText(name if name else path)
         self.ui.selectedGameLabel.setText(name)
 
         # Update the config
         self.save_games_to_config()
 
+    @try_except
     def select_game(self):
         game = self.get_selected_game()
         if not game:
@@ -162,6 +186,7 @@ class GameList:
         message_box = QMessageBox()
         message_box.critical(self.ui.centralwidget, title, text)
 
+    @try_except
     def open_details_dialog(self, name=None, path=None, parameters=None):
         dialog = QtWidgets.QDialog()
         dialog.ui = Ui_Dialog()
@@ -171,7 +196,6 @@ class GameList:
         pixmap = QPixmap(open_file_icon)
         icon = QIcon(pixmap)
         dialog.ui.openPathButton.setIcon(icon)
-        # dialog.ui.openPathButton.setIconSize(65, 65)
 
         # Fill in the forms
         dialog.ui.nameTextEdit.setPlainText(name)
@@ -183,27 +207,31 @@ class GameList:
 
         return dialog.exec_(), dialog.ui.nameTextEdit.toPlainText(), dialog.ui.pathTextEdit.toPlainText(), dialog.ui.parametersTextEdit.toPlainText()
 
+    # @try_except
     def open_file_browser(self, dialog_ui: Optional[Ui_Dialog] = None):
-        if not dialog_ui:
-            return
+        try:
+            if not dialog_ui:
+                return
 
-        # Get the starting path
-        start_path = dialog_ui.pathTextEdit.toPlainText()
-        if start_path:
-            start_path, _ = ntpath.split(start_path)
-            start_path += os.path.sep + "*"
-        else:
-            start_path = None
+            # Get the starting path
+            start_path = dialog_ui.pathTextEdit.toPlainText()
+            if start_path:
+                start_path, _ = ntpath.split(start_path)
+                start_path += os.path.sep + "*"
+            else:
+                start_path = None
 
-        # Open the file browser and add the selected path to the path text field
-        path = easygui.fileopenbox(title="Remote Play Anything", msg="Choose the game executable", default=start_path, filetypes=["*.exe"])
-        if not path:
-            return
+            # Open the file browser and add the selected path to the path text field
+            path = easygui.fileopenbox(title="Remote Play Anything", msg="Choose the game executable", default=start_path, filetypes=["*.exe"])
+            if not path:
+                return
 
-        dialog_ui.pathTextEdit.setPlainText(path)
+            dialog_ui.pathTextEdit.setPlainText(path)
 
-        # If no name is in the name field, add the file name to it
-        if not dialog_ui.nameTextEdit.toPlainText():
-            _, name = ntpath.split(path)
-            # name = ".".join(name.split(".")[:-1])
-            dialog_ui.nameTextEdit.setPlainText(name)
+            # If no name is in the name field, add the file name to it
+            if not dialog_ui.nameTextEdit.toPlainText():
+                _, name = ntpath.split(path)
+                # name = ".".join(name.split(".")[:-1])
+                dialog_ui.nameTextEdit.setPlainText(name)
+        except Exception as e:
+            print(e)

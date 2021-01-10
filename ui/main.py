@@ -102,7 +102,7 @@ class Ui_MainWindow(object):
         self.backgroundImage.setInteractive(False)
         self.backgroundImage.setObjectName("backgroundImage")
         self.versionLabel = QtWidgets.QLabel(self.centralwidget)
-        self.versionLabel.setGeometry(QtCore.QRect(630, 560, 171, 31))
+        self.versionLabel.setGeometry(QtCore.QRect(10, 560, 791, 31))
         self.versionLabel.setAlignment(QtCore.Qt.AlignBottom|QtCore.Qt.AlignRight|QtCore.Qt.AlignTrailing)
         self.versionLabel.setObjectName("versionLabel")
         self.backgroundImage.raise_()

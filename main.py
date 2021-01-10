@@ -3,8 +3,6 @@ import sys
 import pathlib
 
 from PyQt5 import QtGui
-from PyQt5.QtCore import Qt
-from PyQt5.QtGui import QPixmap, QPalette
 from PyQt5.QtWidgets import QApplication, QMainWindow
 
 from ui.main import Ui_MainWindow
@@ -45,7 +43,7 @@ def main():
 
     # Set the version number
     version_str = ".".join([str(x) for x in version])
-    ui.versionLabel.setText(f"Remote Play Anything v{version_str}")
+    ui.versionLabel.setText(f"Remote Play Anything v{version_str}" + ("" if len(sys.argv) <= 1 else f", with args: {' '.join(sys.argv[1:])}"))
 
     # Add click events to all the buttons
     ui.startGameButton.clicked.connect(game_list.start_game)
