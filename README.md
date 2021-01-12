@@ -38,5 +38,10 @@ You can use this to use Steam Remote Play Together on any game or stream to your
  
 ## Changelog
 
+#### 1.1
+- Improved game starting logic
+  - More games are now compatible
+- Adding a new game to the list now selects it
+
 #### 1.0
 - First release of RemotePlayAnything

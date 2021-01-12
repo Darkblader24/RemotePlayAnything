@@ -12,7 +12,7 @@ main_dir = pathlib.Path(os.path.dirname(__file__)).resolve()
 resources_dir = os.path.join(str(main_dir), "resources")
 icon_file = os.path.join(str(resources_dir), "logo.ico")
 
-version = (1, 0)
+version = (1, 1)
 
 
 def main():
