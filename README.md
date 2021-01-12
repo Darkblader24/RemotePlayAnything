@@ -39,4 +39,4 @@ You can use this to use Steam Remote Play Together on any game or stream to your
 ## Changelog
 
 #### 1.0
-- First Release of Remote Play Anything
+- First release of RemotePlayAnything

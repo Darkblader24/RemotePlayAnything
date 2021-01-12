@@ -43,6 +43,12 @@ class Game:
     def serialize(self):
         return self.__dict__
 
+    def get_dir(self):
+        return ntpath.split(self.path)[0]
+
+    def get_file(self):
+        return ntpath.split(self.path)[1]
+
 
 class GameList:
     def __init__(self, ui: Ui_MainWindow):
@@ -109,12 +115,14 @@ class GameList:
             return
 
         # Run the game with steam overlay enabled
-        cmd = game.path
+        cmd = game.get_file()
         if game.parameters:
             cmd += " " + game.parameters
 
         try:
-            subprocess.Popen(cmd)
+            os.chdir(game.get_dir())
+            # os.startfile(game.path)
+            subprocess.Popen(cmd, )
         except WindowsError as e:
             error = str(e)
             if " 740]" in error:
@@ -137,6 +145,8 @@ class GameList:
         self.ui.gamesList.addItem(item)
 
         if show_details:
+            item.setSelected(True)
+            self.set_selected_game_label(game)
             self.save_games_to_config()
 
     @try_except
@@ -180,6 +190,10 @@ class GameList:
         game = self.get_selected_game()
         if not game:
             return
+
+        self.set_selected_game_label(game)
+
+    def set_selected_game_label(self, game):
         self.ui.selectedGameLabel.setText(game.name)
 
     def show_error(self, title="Error", text="An error has occurred!"):
@@ -226,12 +240,14 @@ class GameList:
             if not path:
                 return
 
-            dialog_ui.pathTextEdit.setPlainText(path)
-
-            # If no name is in the name field, add the file name to it
-            if not dialog_ui.nameTextEdit.toPlainText():
+            # If no name is in the name field or the name field is unchanged, set it as the file name
+            curr_name = dialog_ui.nameTextEdit.toPlainText()
+            curr_path = dialog_ui.pathTextEdit.toPlainText()
+            if not curr_name or ntpath.split(curr_path)[1] == curr_name:
                 _, name = ntpath.split(path)
-                # name = ".".join(name.split(".")[:-1])
                 dialog_ui.nameTextEdit.setPlainText(name)
+
+            # Then set the path field
+            dialog_ui.pathTextEdit.setPlainText(path)
         except Exception as e:
             print(e)
