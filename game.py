@@ -72,21 +72,31 @@ class GameList:
     @try_except
     def save_games_to_config(self):
         with open(config_file, 'w', encoding="utf8") as outfile:
-            game_list_data = [game.serialize() for game in self.game_list]
-            json.dump(game_list_data, outfile, ensure_ascii=False, indent=4)
+            data = {
+                "games": [game.serialize() for game in self.game_list]
+            }
+            json.dump(data, outfile, ensure_ascii=False, indent=4)
 
     @try_except
     def load_games_from_config(self):
         if os.path.isfile(config_file):
             try:
                 with open(config_file, encoding="utf8") as file:
-                    saved_games = json.load(file)
+                    data = json.load(file)
+                    saved_games = data if type(data) is list else data.get("games")
+                    if saved_games is None:
+                        self.delete_config()
 
                     for game in saved_games:
                         self.add_game(name=game["name"], path=game["path"], parameters=game["parameters"], show_details=False)
             except json.decoder.JSONDecodeError:
-                os.remove(config_file)
-                print("Config file got reset.")
+                self.delete_config()
+
+    @try_except
+    def delete_config(self):
+        if os.path.isfile(config_file):
+            os.remove(config_file)
+            print("Config file got reset.")
 
     @try_except
     def get_selected_row(self) -> Optional[int]:
