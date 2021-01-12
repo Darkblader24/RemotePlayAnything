@@ -6,7 +6,7 @@ You can use this to use Steam Remote Play Together on any game or stream to your
 ---
 
 ## Installation
-- Download the latest .exe file from the releases
+- Download the latest .exe file from [here](https://github.com/Darkblader24/RemotePlayAnything/releases)
 - Download a donor game from Steam that has Remote Play Together enabled
   - A very good donor game is [ANYKEY](https://store.steampowered.com/app/790450/ANYKEY/)
   - It's free, small (40mb) and no longer gets updates, so it's perfect
