@@ -4,6 +4,7 @@ import sys
 import json
 import ntpath
 import pathlib
+import traceback
 from typing import Optional
 
 import easygui
@@ -23,6 +24,9 @@ exe_dir = main_dir
 if not sys.executable.endswith("python.exe"):
     exe_dir, _ = ntpath.split(sys.executable)
 config_file = os.path.join(str(exe_dir), "config_rpa.json")
+
+
+# Blizzard game launch parameters: https://steamcommunity.com/sharedfiles/filedetails/?id=1113049716
 
 
 class Game:
@@ -66,7 +70,7 @@ class GameList:
             except Exception as e:
                 print(e)
                 self: GameList = args[0]
-                self.show_error("An error has occured!", str(e))
+                self.show_error(str(e), str(traceback.format_exc()))
         return wrapper
 
     @try_except
@@ -131,8 +135,7 @@ class GameList:
 
         try:
             os.chdir(game.get_dir())
-            # os.startfile(game.path)
-            subprocess.Popen(cmd, )
+            subprocess.Popen(cmd)
         except WindowsError as e:
             error = str(e)
             if " 740]" in error:
@@ -209,6 +212,7 @@ class GameList:
     def show_error(self, title="Error", text="An error has occurred!"):
         message_box = QMessageBox()
         message_box.critical(self.ui.centralwidget, title, text)
+        message_box.setMinimumWidth(1000)
 
     @try_except
     def open_details_dialog(self, name=None, path=None, parameters=None):
@@ -261,3 +265,4 @@ class GameList:
             dialog_ui.pathTextEdit.setPlainText(path)
         except Exception as e:
             print(e)
+            self.show_error(str(e), str(traceback.format_exc()))

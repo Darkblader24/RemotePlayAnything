@@ -11,7 +11,7 @@ You can use this to use Steam Remote Play Together on any game or stream to your
   - A very good donor game is [ANYKEY](https://store.steampowered.com/app/790450/ANYKEY/)
   - It's free, small (40mb) and no longer gets updates, so it's perfect
 - Go into the directory in which your donor game is installed and find its launch binary
-- Rename this executable to anything else
+- Rename this binary to anything else
 - Paste the downloaded file "RemotePlayAnything.exe" into the same folder as the binary (.exe file) of your donor game
 - Rename "RemotePlayAnything.exe" into the exact name of the binary of your donor game
   - In the case of ANYKEY you would rename "RemotePlayAnything.exe" into "ANYKEY.exe"
@@ -37,6 +37,9 @@ You can use this to use Steam Remote Play Together on any game or stream to your
 ---
  
 ## Changelog
+
+#### 1.2 (Not released yet)
+- Better error messages
 
 #### 1.1
 - Improved game starting logic
