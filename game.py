@@ -70,7 +70,7 @@ class GameList:
             except Exception as e:
                 print(e)
                 self: GameList = args[0]
-                self.show_error(str(e), str(traceback.format_exc()))
+                self.show_error(text=str(e), details=str(traceback.format_exc()))
         return wrapper
 
     @try_except
@@ -209,10 +209,11 @@ class GameList:
     def set_selected_game_label(self, game):
         self.ui.selectedGameLabel.setText(game.name)
 
-    def show_error(self, title="Error", text="An error has occurred!"):
-        message_box = QMessageBox()
-        message_box.critical(self.ui.centralwidget, title, text)
-        message_box.setMinimumWidth(1000)
+    def show_error(self, title="An error has occurred!", text="Task failed successfully", details=None):
+        message_box = QMessageBox(QMessageBox.Critical, title, text)
+        if details:
+            message_box.setDetailedText(details)
+        message_box.exec_()
 
     @try_except
     def open_details_dialog(self, name=None, path=None, parameters=None):
@@ -265,4 +266,4 @@ class GameList:
             dialog_ui.pathTextEdit.setPlainText(path)
         except Exception as e:
             print(e)
-            self.show_error(str(e), str(traceback.format_exc()))
+            self.show_error(text=str(e), details=str(traceback.format_exc()))
