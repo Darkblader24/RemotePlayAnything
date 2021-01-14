@@ -106,6 +106,12 @@
       <height>331</height>
      </rect>
     </property>
+    <property name="layoutMode">
+     <enum>QListView::SinglePass</enum>
+    </property>
+    <property name="uniformItemSizes">
+     <bool>false</bool>
+    </property>
     <item>
      <property name="text">
       <string>Heroes of Might and Magic 7</string>
@@ -230,6 +236,38 @@
      <set>Qt::AlignBottom|Qt::AlignRight|Qt::AlignTrailing</set>
     </property>
    </widget>
+   <widget class="QPushButton" name="moveGameUpButton">
+    <property name="geometry">
+     <rect>
+      <x>280</x>
+      <y>390</y>
+      <width>41</width>
+      <height>31</height>
+     </rect>
+    </property>
+    <property name="accessibleName">
+     <string>listEditButton</string>
+    </property>
+    <property name="text">
+     <string>Up</string>
+    </property>
+   </widget>
+   <widget class="QPushButton" name="moveGameDownButton">
+    <property name="geometry">
+     <rect>
+      <x>330</x>
+      <y>390</y>
+      <width>41</width>
+      <height>31</height>
+     </rect>
+    </property>
+    <property name="accessibleName">
+     <string>listEditButton</string>
+    </property>
+    <property name="text">
+     <string>Down</string>
+    </property>
+   </widget>
    <zorder>backgroundImage</zorder>
    <zorder>startGameButton</zorder>
    <zorder>selectedGameLabel</zorder>
@@ -239,6 +277,8 @@
    <zorder>gameListTitleLabel</zorder>
    <zorder>editGameButton</zorder>
    <zorder>versionLabel</zorder>
+   <zorder>moveGameUpButton</zorder>
+   <zorder>moveGameDownButton</zorder>
   </widget>
  </widget>
  <resources>

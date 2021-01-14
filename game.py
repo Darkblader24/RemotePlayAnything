@@ -1,20 +1,21 @@
-import ctypes
 import os
 import sys
 import json
 import ntpath
+import ctypes
+import easygui
 import pathlib
 import traceback
+import subprocess
 from typing import Optional
 
-import easygui
-import subprocess
 from PyQt5 import QtWidgets
 from PyQt5.QtGui import QIcon, QPixmap
-from PyQt5.QtWidgets import QMessageBox
 
+import utils
 from ui.main import Ui_MainWindow
 from ui.details import Ui_Dialog
+from game_item import GameListItem, Game
 
 main_dir = pathlib.Path(os.path.dirname(__file__)).resolve()
 resources_dir = os.path.join(str(main_dir), "resources")
@@ -29,35 +30,9 @@ config_file = os.path.join(str(exe_dir), "config_rpa.json")
 # Blizzard game launch parameters: https://steamcommunity.com/sharedfiles/filedetails/?id=1113049716
 
 
-class Game:
-    def __init__(self, name, path, parameters):
-        if not name:
-            _, name = ntpath.split(path)
-
-        self.name = name
-        self.path = path
-        self.parameters = parameters
-
-    def is_valid_path(self):
-        return os.path.isfile(self.path)
-
-    def title(self):
-        return self.name if self.name else self.path
-
-    def serialize(self):
-        return self.__dict__
-
-    def get_dir(self):
-        return ntpath.split(self.path)[0]
-
-    def get_file(self):
-        return ntpath.split(self.path)[1]
-
-
 class GameList:
     def __init__(self, ui: Ui_MainWindow):
         self.ui: Ui_MainWindow = ui
-        self.game_list: list[Game] = []
 
         # Clear games from list and then load in all saved games
         self.ui.gamesList.clear()
@@ -68,16 +43,16 @@ class GameList:
             try:
                 return func(*args[:-1] if len(args) > 1 else args, **kwargs)
             except Exception as e:
-                print(e)
+                print(traceback.format_exc())
                 self: GameList = args[0]
-                self.show_error(text=str(e), details=str(traceback.format_exc()))
+                utils.show_error(text=str(e))
         return wrapper
 
     @try_except
     def save_games_to_config(self):
         with open(config_file, 'w', encoding="utf8") as outfile:
             data = {
-                "games": [game.serialize() for game in self.game_list]
+                "games": [game.serialize() for game in self.get_games_list()],
             }
             json.dump(data, outfile, ensure_ascii=False, indent=4)
 
@@ -102,30 +77,34 @@ class GameList:
             os.remove(config_file)
             print("Config file got reset.")
 
+    def get_games_list(self) -> list[Game]:
+        for i in range(self.ui.gamesList.count()):
+            yield self.ui.gamesList.item(i).game
+
     @try_except
-    def get_selected_row(self) -> Optional[int]:
-        selected_rows = self.ui.gamesList.selectedIndexes()
-        if not selected_rows:
+    def get_selected_item(self) -> Optional[GameListItem]:
+        game_items: list[GameListItem] = self.ui.gamesList.selectedItems()
+        if not game_items:
             return None
-        return selected_rows[0].row()
+        return game_items[0]
 
     @try_except
     def get_selected_game(self) -> Optional[Game]:
-        row = self.get_selected_row()
-        if row is None:
+        game_item = self.get_selected_item()
+        if not game_item:
             return None
-        return self.game_list[row]
+        return game_item.game
 
     @try_except
     def start_game(self):
         game = self.get_selected_game()
         if not game:
-            self.show_error("No game selected", "Please select a game from the list first!")
+            utils.show_error("No game selected", "Please select a game from the list first!", details=False)
             return
 
         # Check if file exists:
         if not game.is_valid_path():
-            self.show_error("Game not found", "The path to the game is invalid! Please check the path of the game.")
+            utils.show_error("Game not found", "The path to the game is invalid! Please check the path of the game.", details=False)
             return
 
         # Run the game with steam overlay enabled
@@ -141,7 +120,7 @@ class GameList:
             if " 740]" in error:
                 ctypes.windll.shell32.ShellExecuteW(None, "runas", game.path, game.parameters, None, 1)
             else:
-                self.show_error(text=error.replace("%1", game.name))
+                utils.show_error(text=error.replace("%1", game.name), details=False)
 
     @try_except
     def add_game(self, name=None, path=None, parameters=None, show_details=True):
@@ -151,14 +130,11 @@ class GameList:
                 return
 
         game = Game(name, path, parameters)
-        self.game_list.append(game)
-
-        item = QtWidgets.QListWidgetItem()
-        item.setText(game.title())
-        self.ui.gamesList.addItem(item)
+        game_item = GameListItem(self.ui.gamesList, game)
+        game_item.add_to_list()
 
         if show_details:
-            item.setSelected(True)
+            game_item.setSelected(True)
             self.set_selected_game_label(game)
             self.save_games_to_config()
 
@@ -171,14 +147,13 @@ class GameList:
         for selected_row in selected_rows:
             row = selected_row.row()
             self.ui.gamesList.takeItem(row)
-            self.game_list.pop(row)
 
         self.save_games_to_config()
 
     @try_except
     def edit_game(self):
         game = self.get_selected_game()
-        row = self.get_selected_row()
+        game_item = self.get_selected_item()
         if not game:
             return
 
@@ -192,7 +167,7 @@ class GameList:
         game.parameters = parameters
 
         # Update the item in the list and the selected game
-        self.ui.gamesList.item(row).setText(name if name else path)
+        game_item.update()
         self.ui.selectedGameLabel.setText(name)
 
         # Update the config
@@ -206,14 +181,24 @@ class GameList:
 
         self.set_selected_game_label(game)
 
+    @try_except
+    def move_game_up(self):
+        game_item = self.get_selected_item()
+        if not game_item:
+            return
+
+        game_item.move_up()
+
+    @try_except
+    def move_game_down(self):
+        game_item = self.get_selected_item()
+        if not game_item:
+            return
+
+        game_item.move_down()
+
     def set_selected_game_label(self, game):
         self.ui.selectedGameLabel.setText(game.name)
-
-    def show_error(self, title="An error has occurred!", text="Task failed successfully", details=None):
-        message_box = QMessageBox(QMessageBox.Critical, title, text)
-        if details:
-            message_box.setDetailedText(details)
-        message_box.exec_()
 
     @try_except
     def open_details_dialog(self, name=None, path=None, parameters=None):
@@ -251,19 +236,19 @@ class GameList:
                 start_path = None
 
             # Open the file browser and add the selected path to the path text field
-            path = easygui.fileopenbox(title="Remote Play Anything", msg="Choose the game executable", default=start_path, filetypes=["*.exe"])
-            if not path:
+            new_path = easygui.fileopenbox(title="Remote Play Anything", msg="Choose the game executable", default=start_path, filetypes=["*.exe"])
+            if not new_path:
                 return
 
             # If no name is in the name field or the name field is unchanged, set it as the file name
             curr_name = dialog_ui.nameTextEdit.toPlainText()
             curr_path = dialog_ui.pathTextEdit.toPlainText()
-            if not curr_name or ntpath.split(curr_path)[1] == curr_name:
-                _, name = ntpath.split(path)
-                dialog_ui.nameTextEdit.setPlainText(name)
+            curr_file_name = utils.get_file_name(curr_path)
+            if not curr_name or curr_file_name == curr_name:
+                new_name = utils.get_file_name(new_path)
+                dialog_ui.nameTextEdit.setPlainText(new_name)
 
             # Then set the path field
-            dialog_ui.pathTextEdit.setPlainText(path)
+            dialog_ui.pathTextEdit.setPlainText(new_path)
         except Exception as e:
-            print(e)
-            self.show_error(text=str(e), details=str(traceback.format_exc()))
+            utils.show_error(text=str(e))

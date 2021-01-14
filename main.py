@@ -38,19 +38,25 @@ def main():
 
     main_window.statusBar().hide()
 
-    # Initialize the list of games
-    game_list = GameList(ui)
-
     # Set the version number
     version_str = ".".join([str(x) for x in version])
     ui.versionLabel.setText(f"Remote Play Anything v{version_str}" + ("" if len(sys.argv) <= 1 else f", with args: {' '.join(sys.argv[1:])}"))
+
+    # Initialize the list of games
+    game_list = GameList(ui)
 
     # Add click events to all the buttons
     ui.startGameButton.clicked.connect(game_list.start_game)
     ui.addGameButton.clicked.connect(game_list.add_game)
     ui.editGameButton.clicked.connect(game_list.edit_game)
     ui.removeGameButton.clicked.connect(game_list.remove_game)
+    ui.moveGameUpButton.clicked.connect(game_list.move_game_up)
+    ui.moveGameDownButton.clicked.connect(game_list.move_game_down)
     ui.gamesList.clicked.connect(game_list.select_game)
+
+    # Hide move button for now
+    ui.moveGameUpButton.hide()
+    ui.moveGameDownButton.hide()
 
     # Set the size of the window to fixed
     main_window.statusBar().setSizeGripEnabled(False)
