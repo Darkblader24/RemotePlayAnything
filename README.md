@@ -27,12 +27,12 @@ You can use this to use Steam Remote Play Together on any game or stream to your
 
 - Selecting a game from your list:
 
-  ![](https://i.imgur.com/LJMyG04.png)
+  ![](https://i.imgur.com/jjAjBep.png)
   
 
 - Adding a new game:
   
-  ![](https://i.imgur.com/dXPhdIv.png)
+  ![](https://i.imgur.com/beIRhVS.png)
 
 ---
  
