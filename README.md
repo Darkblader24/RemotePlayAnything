@@ -38,8 +38,10 @@ You can use this to use Steam Remote Play Together on any game or stream to your
  
 ## Changelog
 
-#### 1.2 (Not released yet)
+#### 1.2
 - Better error messages
+- Improved design of the game list, it now shows the icons of the added games
+- Adding a game path now suggest the name of the game
 
 #### 1.1
 - Improved game starting logic
