@@ -2,8 +2,8 @@ import os
 import utils
 import ntpath
 import platform
-
 import win32gui
+import pywintypes
 
 from PyQt5 import QtWidgets
 from PyQt5.QtGui import QPixmap
@@ -73,8 +73,11 @@ class GameListItem(QtWidgets.QListWidgetItem):
 
     def set_icon(self, path):
         if platform.system() == "Windows":
-            # Get the icons in different sizes of the binary
-            large, small = win32gui.ExtractIconEx(path, 0, 10)
+            # Get the icons in different sizes from the binary
+            try:
+                large, small = win32gui.ExtractIconEx(path, 0, 10)
+            except pywintypes.error:
+                return
 
             # Convert it into a pixmap
             if large:

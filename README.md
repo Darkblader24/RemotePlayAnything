@@ -38,6 +38,10 @@ You can use this to use Steam Remote Play Together on any game or stream to your
  
 ## Changelog
 
+#### 1.3
+- Fixed error when a game file path was invalid
+- Improved error messages
+
 #### 1.2
 - Better error messages
 - Improved design of the game list, it now shows the icons of the added games

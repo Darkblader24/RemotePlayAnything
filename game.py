@@ -104,7 +104,7 @@ class GameList:
 
         # Check if file exists:
         if not game.is_valid_path():
-            utils.show_error("Game not found", "The path to the game is invalid! Please check the path of the game.", details=False)
+            utils.show_error("Game not found", "The path to the game is invalid! \nPlease check the path of the game.", details=False)
             return
 
         # Run the game with steam overlay enabled

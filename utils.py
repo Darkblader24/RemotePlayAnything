@@ -5,7 +5,7 @@ import win32api
 from PyQt5.QtWidgets import QMessageBox
 
 
-def show_error(text="Task failed successfully", title="An error has occurred!", details=True):
+def show_error(title="An error has occurred!", text="Task failed successfully", details=True):
     message_box = QMessageBox(QMessageBox.Critical, str(title), str(text))
     if details:
         error = str(traceback.format_exc())
